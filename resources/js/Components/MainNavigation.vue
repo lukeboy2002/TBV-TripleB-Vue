@@ -1,3 +1,37 @@
+<script setup lang="ts">
+import Dropdown from "@/Components/Dropdown.vue";
+import NavLink from "@/Components/NavLink.vue";
+import {Link, router, usePage} from "@inertiajs/vue3";
+import DropdownLink from "@/Components/DropdownLink.vue";
+import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue";
+import {ref} from "vue";
+
+const showingNavigationDropdown = ref(false);
+
+const logout = () => {
+    router.post(route('logout'));
+};
+
+const menu = [
+    {
+        name: "Home",
+        url: route('home'),
+        route: 'home',
+    },
+    {
+        name: "Posts",
+        url: route('posts.index'),
+        route: 'posts.index',
+    },
+    {
+        name: "Dashboard",
+        url: route('dashboard'),
+        route: 'dashboard',
+        when: () => usePage().props.auth.user,
+    },
+];
+</script>
+
 <template>
     <nav class="bg-gray-50 dark:bg-gray-700">
         <!-- Primary Navigation Menu -->
@@ -5,16 +39,21 @@
             <div class="flex justify-between h-16">
                 <div class="flex">
                     <!-- Navigation Links -->
-                    <div class="hidden space-x-8 sm:-my-px sm:flex">
-                        <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
-                            Dashboard
-                        </NavLink>
+                    <div class="hidden space-x-4 sm:-my-px sm:flex">
+                        <template v-for="item in menu" :key="item.name">
+                            <NavLink
+                                v-if="item.when ? item.when() : true"
+                                :href="item.url"
+                                :active="route().current(item.route)">
+                                {{ item.name }}
+                            </NavLink>
+                        </template>
                     </div>
                 </div>
 
                 <div class="hidden sm:flex sm:items-center sm:ms-6">
                     <!-- Settings Dropdown -->
-                    <div class="ms-3 relative">
+                    <div v-if="$page.props.auth.user" class="ms-3 relative">
                         <Dropdown align="right" width="48">
                             <template #trigger>
                                 <button v-if="$page.props.jetstream.managesProfilePhotos" class="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition">
@@ -53,6 +92,21 @@
                             </template>
                         </Dropdown>
                     </div>
+                    <div v-else>
+                        <Link
+                            :href="route('login')"
+                            class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
+                        >
+                            Log in
+                        </Link>
+
+                        <Link
+                            :href="route('register')"
+                            class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
+                        >
+                            Register
+                        </Link>
+                    </div>
                 </div>
 
                 <!-- Hamburger -->
@@ -86,14 +140,19 @@
 
         <!-- Responsive Navigation Menu -->
         <div :class="{'block': showingNavigationDropdown, 'hidden': ! showingNavigationDropdown}" class="sm:hidden">
-            <div class="pt-2 pb-3 space-y-1">
-                <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
-                    Dashboard
-                </ResponsiveNavLink>
+            <div class="pt-2  space-y-1">
+                <template v-for="item in menu" :key="item.name">
+                    <ResponsiveNavLink
+                        v-if="item.when ? item.when() : true"
+                        :href="item.url"
+                        :active="route().current(item.route)">
+                        {{ item.name }}
+                    </ResponsiveNavLink>
+                </template>
             </div>
 
             <!-- Responsive Settings Options -->
-            <div class="pt-4 pb-1 border-t border-orange-500/30">
+            <div v-if="$page.props.auth.user" class="pt-4 pb-1 border-t border-orange-500/30">
                 <div class="flex items-center px-4">
                     <div v-if="$page.props.jetstream.managesProfilePhotos" class="shrink-0 me-3">
                         <img class="h-10 w-10 rounded-full object-cover" :src="$page.props.auth.user.profile_photo_url" :alt="$page.props.auth.user.username">
@@ -122,21 +181,21 @@
                     </form>
                 </div>
             </div>
+            <div v-else>
+                <ResponsiveNavLink
+                    :href="route('login')"
+                    class="rounded-md py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
+                >
+                    Log in
+                </ResponsiveNavLink>
+
+                <ResponsiveNavLink
+                    :href="route('register')"
+                    class="rounded-md py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
+                >
+                    Register
+                </ResponsiveNavLink>
+            </div>
         </div>
     </nav>
 </template>
-
-<script setup lang="ts">
-import Dropdown from "@/Components/Dropdown.vue";
-import NavLink from "@/Components/NavLink.vue";
-import {Link, router} from "@inertiajs/vue3";
-import DropdownLink from "@/Components/DropdownLink.vue";
-import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue";
-import {ref} from "vue";
-
-const showingNavigationDropdown = ref(false);
-
-const logout = () => {
-    router.post(route('logout'));
-};
-</script>

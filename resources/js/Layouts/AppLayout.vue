@@ -27,9 +27,18 @@ defineProps({
             </header>
 
             <!-- Page Content -->
-            <main>
+            <div v-if="$slots.side" class="max-w-7xl mx-auto flex flex-wrap py-10 sm:px-6 lg:px-8">
+                <main class="w-full md:w-3/4 flex flex-col px-3">
+                    <slot />
+                </main>
+                <aside class="w-full md:w-1/4 flex flex-col px-3">
+                    <slot name="side" />
+                </aside>
+            </div>
+
+            <div v-else class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
                 <slot />
-            </main>
+            </div>
         </div>
         <Footer />
     </div>
