@@ -1,0 +1,30 @@
+<?php
+
+namespace App\Http\Resources;
+
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class PostResource extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(Request $request): array
+    {
+        return [
+            'id' => $this->id,
+            'user' => $this->whenLoaded('user', fn () => UserResource::make($this->user)),
+            'title' => $this->title,
+            'slug' => $this->slug,
+            'body' => $this->body,
+            'image' => $this->image,
+            'featured' => $this->featured,
+            'published_at' => $this->published_at,
+            'updated_at' => $this->updated_at,
+            'created_at' => $this->created_at,
+        ];
+    }
+}
