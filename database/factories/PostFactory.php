@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Collection;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Post>
@@ -22,7 +23,7 @@ class PostFactory extends Factory
             'title' => str(fake()->sentence)->beforeLast('.')->title(),
             'slug' => str(fake()->slug)->slug(),
             'image' => fake()->imageUrl(),
-            'body' => fake()->realText(600),
+            'body' => Collection::times(4, fn () => fake()->realText(1250))->join(PHP_EOL.PHP_EOL),
             'featured' => fake()->boolean,
             'published_at' => fake()->dateTimeBetween('-1 Week', '+1 week'),
         ];
