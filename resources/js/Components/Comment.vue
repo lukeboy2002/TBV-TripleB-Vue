@@ -11,12 +11,24 @@
             <div class="p-3 text-xs font-normal text-gray-500 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-600 dark:border-gray-500 dark:text-gray-300">
                 {{ comment.body }}
             </div>
+            <div class="flex justify-end mt-1">
+                <form v-if="comment.can?.delete" @submit.prevent="$emit('delete', comment.id)">
+                    <DangerButton type="submit">
+                        <TrashIcon class="size-4" />
+                    </DangerButton>
+                </form>
+            </div>
         </div>
+
     </div>
 </template>
 
 <script setup>
-import {relativeDate} from "@/date.js";
+import DangerButton from "@/Components/DangerButton.vue";
 
-defineProps(['comment']);
+import {relativeDate} from "@/date.js";
+import {TrashIcon} from "@heroicons/vue/24/outline";
+
+const props = defineProps(['comment']);
+const emit = defineEmits(['delete']);
 </script>

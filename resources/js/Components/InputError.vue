@@ -13,7 +13,7 @@
 </template>
 
 <script setup>
-import { ExclamationTriangleIcon} from "@heroicons/vue/24/outline";
+import {ExclamationTriangleIcon} from "@heroicons/vue/24/outline";
 
 defineProps({
     message: String,

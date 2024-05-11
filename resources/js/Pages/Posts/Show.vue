@@ -20,7 +20,7 @@
             <div class="mx-6">
                 <ol class="relative border-s border-gray-200 dark:border-gray-500">
                     <li v-for="comment in comments.data" :key="comment.id" >
-                        <Comment :comment="comment"/>
+                        <Comment @delete="deleteComment" :comment="comment"/>
                     </li>
                 </ol>
             </div>
@@ -70,19 +70,24 @@ import TextArea from "@/Components/TextArea.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import InputError from "@/Components/InputError.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
-import {useForm, Link} from "@inertiajs/vue3";
+import {useForm, Link, router} from "@inertiajs/vue3";
 import {computed} from "vue";
 import {relativeDate} from "@/date.js";
+
+const props = defineProps(['post', 'comments']);
 
 const commentForm = useForm({
     body: '',
 });
+
+const formattedDate = computed(() => relativeDate(props.post.created_at));
+
 const addComment = () => commentForm.post(route('posts.comments.store', props.post.id), {
     preserveScroll: true,
     onSuccess: () => commentForm.reset(),
 });
 
-const props = defineProps(['post', 'comments']);
-
-const formattedDate = computed(() => relativeDate(props.post.created_at));
+const deleteComment = (commentId) => router.delete(route('comments.destroy', { comment: commentId, page: props.comments.meta.current_page }), {
+    preserveScroll: true,
+});
 </script>
