@@ -20,9 +20,7 @@
             </p>
             <div class="flex justify-between items-center">
                 <div class="flex items-center space-x-4">
-                    <img :src="post.user.profile_photo_path" class="w-7 h-7 rounded-full" />
-
-<!--                    <img class="w-7 h-7 rounded-full" :src=post.user.profile_image_path alt="Jese Leos avatar" />-->
+                    <img :src="post.user.profile_photo_url" class="w-7 h-7 rounded-full" />
                     <span class="font-medium dark:text-white">{{ post.user.username }}</span>
                 </div>
                 <DefaultLink
@@ -34,7 +32,7 @@
             </div>
         </Article>
 
-            <Paginate :meta="posts.meta" />
+        <Paginate :meta="posts.meta" :only="['posts']" />
     </AppLayout>
 </template>
 <script setup>
@@ -44,13 +42,11 @@ import Article from "@/Components/Article.vue";
 import DefaultLink from "@/Components/DefaultLink.vue";
 
 import {Link} from "@inertiajs/vue3";
-import {formatDistance, parseISO} from "date-fns";
-
+import {relativeDate} from "@/date.js";
 import {ArrowRightCircleIcon} from "@heroicons/vue/24/outline/index.js";
 
 defineProps(['posts']);
 
-const formattedDate = (post) => {
-    return formatDistance(parseISO(post.created_at), new Date());
-};
+const formattedDate = (post) => relativeDate(post.created_at);
+
 </script>

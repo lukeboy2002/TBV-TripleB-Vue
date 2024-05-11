@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PostController;
 use App\Http\Resources\CommentResource;
 use App\Http\Resources\PostResource;
@@ -27,4 +28,5 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
+    Route::post('posts/{post}/comments', [CommentController::class, 'store'])->name('posts.comments.store');
 });

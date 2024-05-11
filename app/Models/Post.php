@@ -48,9 +48,4 @@ class Post extends Model
     {
         return $this->hasMany(Comment::class);
     }
-
-    public function shortBody($words = 50): string
-    {
-        return Str::words(strip_tags($this->body), $words);
-    }
 }

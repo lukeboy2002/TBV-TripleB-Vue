@@ -1,8 +1,14 @@
 <template>
     <div class="flex items-center justify-between border-t border-orange-500/30 py-3">
         <div class="flex flex-1 justify-between sm:hidden">
-            <NavLink :href="previousUrl">Previous</NavLink>
-            <NavLink :href="nextUrl">Next</NavLink>
+            <NavLink :href="previousUrl"
+                     :only="only">
+                Previous
+            </NavLink>
+            <NavLink :href="nextUrl"
+                     :only="only">
+                Next
+            </NavLink>
         </div>
         <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
             <div>
@@ -26,6 +32,7 @@
                 <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
                     <Link v-for="link in meta.links"
                           :href="link.url"
+                          :only="only"
                           class="relative inline-flex items-center first-of-type:rounded-l-md last-of-type:rounded-r-md px-3 py-2"
                           :class="{
                            'z-10 bg-orange-500 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500': link.active,
@@ -45,7 +52,16 @@ import {Link} from "@inertiajs/vue3";
 import {computed} from "vue";
 import NavLink from "@/Components/NavLink.vue";
 
-const props = defineProps(['meta']);
+const props = defineProps({
+    meta: {
+        type: Object,
+        required: true
+    },
+    only: {
+        type: Array,
+        default: () => []
+    }
+});
 
 const previousUrl = computed(() => props.meta.links[0].url);
 const nextUrl = computed(() => [...props.meta.links].reverse()[0].url);
