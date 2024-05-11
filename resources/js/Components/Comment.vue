@@ -11,7 +11,13 @@
             <div class="p-3 text-xs font-normal text-gray-500 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-600 dark:border-gray-500 dark:text-gray-300">
                 {{ comment.body }}
             </div>
-            <div class="flex justify-end mt-1">
+            <div class="flex justify-end space-x-2 mt-2">
+                <form v-if="comment.can?.update" @submit.prevent="$emit('edit', comment.id)">
+                    <SecondaryButton type="submit">
+                        <PencilSquareIcon class="size-4" />
+                    </SecondaryButton>
+                </form>
+
                 <form v-if="comment.can?.delete" @submit.prevent="$emit('delete', comment.id)">
                     <DangerButton type="submit">
                         <TrashIcon class="size-4" />
@@ -25,10 +31,11 @@
 
 <script setup>
 import DangerButton from "@/Components/DangerButton.vue";
+import SecondaryButton from "@/Components/SecondaryButton.vue";
 
 import {relativeDate} from "@/date.js";
-import {TrashIcon} from "@heroicons/vue/24/outline";
+import {TrashIcon, PencilSquareIcon} from "@heroicons/vue/24/outline";
 
 const props = defineProps(['comment']);
-const emit = defineEmits(['delete']);
+const emit = defineEmits(['edit', 'delete']);
 </script>

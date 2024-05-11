@@ -18,23 +18,15 @@
             <h2 class="text-xl font-semibold text-orange-500 w-full">Comments</h2>
             <div class="border-t border-orange-500 mb-8 w-1/6 sm:w-1/12 "></div>
             <div class="mx-6">
-                <ol class="relative border-s border-gray-200 dark:border-gray-500">
-                    <li v-for="comment in comments.data" :key="comment.id" >
-                        <Comment @delete="deleteComment" :comment="comment"/>
-                    </li>
-                </ol>
-            </div>
-
-            <div class="mx-6">
                 <div class="mb-6 ms-10">
-                    <form v-if="$page.props.auth.user" @submit.prevent="addComment" class="mt-4">
+                    <form v-if="$page.props.auth.user" @submit.prevent="() => commentIdBeingEdited ? updateComment() : addComment()" class="mt-4">
                         <div>
                             <InputLabel for="body" class="sr-only">Comment</InputLabel>
-                            <TextArea id="body" v-model="commentForm.body" rows="4" placeholder="Write your comment here..."/>
+                            <TextArea ref="commentTextAreaRef" id="body" v-model="commentForm.body" rows="4" placeholder="Write your comment here..."/>
                             <InputError :message="commentForm.errors.body" class="mt-1" />
                         </div>
-
-                        <PrimaryButton type="submit" class="mt-3" :disabled="commentForm.processing">Add Comment</PrimaryButton>
+                        <PrimaryButton type="submit" class="mt-3" :disabled="commentForm.processing" v-text="commentIdBeingEdited ? 'Update Comment' : 'Add Comment'"></PrimaryButton>
+                        <SecondaryButton v-if="commentIdBeingEdited" @click="cancelEditComment" class="ml-2">Cancel</SecondaryButton>
                     </form>
                     <div v-else class="flex items-center">
                         <div class="flex text-sm text-gray-900 dark:text-white">To add a comment, u must be a member </div>
@@ -48,8 +40,13 @@
                     </div>
                 </div>
             </div>
-
-
+            <div class="mx-6">
+                <ol class="relative border-s border-gray-200 dark:border-gray-500">
+                    <li v-for="comment in comments.data" :key="comment.id" >
+                        <Comment @edit="editComment" @delete="deleteComment" :comment="comment"/>
+                    </li>
+                </ol>
+            </div>
             <Paginate :meta="comments.meta" :only="['comments']"/>
         </div>
         <template #side>
@@ -70,8 +67,10 @@ import TextArea from "@/Components/TextArea.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import InputError from "@/Components/InputError.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
+import SecondaryButton from "@/Components/SecondaryButton.vue";
+
 import {useForm, Link, router} from "@inertiajs/vue3";
-import {computed} from "vue";
+import {computed, ref} from "vue";
 import {relativeDate} from "@/date.js";
 
 const props = defineProps(['post', 'comments']);
@@ -80,11 +79,32 @@ const commentForm = useForm({
     body: '',
 });
 
-const formattedDate = computed(() => relativeDate(props.post.created_at));
+const commentTextAreaRef = ref(null);
+const commentIdBeingEdited = ref(null);
+const commentBeingEdited = computed(() => props.comments.data.find(comment => comment.id === commentIdBeingEdited.value));
+const editComment = (commentId) => {
+    commentIdBeingEdited.value = commentId;
+    commentForm.body = commentBeingEdited.value?.body;
+    commentTextAreaRef.value?.focus();
+};
+const cancelEditComment = () => {
+    commentIdBeingEdited.value = null;
+    commentForm.reset();
+};
 
+// const formattedDate = computed(() => relativeDate(props.post.created_at));
+//
 const addComment = () => commentForm.post(route('posts.comments.store', props.post.id), {
     preserveScroll: true,
     onSuccess: () => commentForm.reset(),
+});
+
+const updateComment = () => commentForm.put(route('comments.update', {
+    comment: commentIdBeingEdited.value,
+    page: props.comments.meta.current_page,
+}), {
+    preserveScroll: true,
+    onSuccess: cancelEditComment,
 });
 
 const deleteComment = (commentId) => router.delete(route('comments.destroy', { comment: commentId, page: props.comments.meta.current_page }), {
