@@ -1,10 +1,12 @@
 <script setup>
-import { ref } from 'vue';
-import { Head, router } from '@inertiajs/vue3';
 import Banner from '@/Components/Banner.vue';
 import MainNavigation from "@/Components/MainNavigation.vue";
 import Header from "@/Components/Header.vue";
 import Footer from "@/Components/Footer.vue";
+import ConfirmationModalWrapper from "@/Components/ConfirmationModalWrapper.vue";
+
+import { Head, router } from '@inertiajs/vue3';
+
 
 defineProps({
     title: String,
@@ -41,5 +43,6 @@ defineProps({
             </div>
         </div>
         <Footer />
+        <ConfirmationModalWrapper />
     </div>
 </template>

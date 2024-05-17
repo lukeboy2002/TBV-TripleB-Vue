@@ -71,7 +71,7 @@ import SecondaryButton from "@/Components/SecondaryButton.vue";
 
 import {useForm, Link, router} from "@inertiajs/vue3";
 import {computed, ref} from "vue";
-import {relativeDate} from "@/date.js";
+import {useConfirm} from "@/useConfirm.js";
 
 const props = defineProps(['post', 'comments']);
 
@@ -92,22 +92,33 @@ const cancelEditComment = () => {
     commentForm.reset();
 };
 
-// const formattedDate = computed(() => relativeDate(props.post.created_at));
-//
+const { confirmation } = useConfirm();
+
 const addComment = () => commentForm.post(route('posts.comments.store', props.post.id), {
     preserveScroll: true,
     onSuccess: () => commentForm.reset(),
 });
 
-const updateComment = () => commentForm.put(route('comments.update', {
-    comment: commentIdBeingEdited.value,
-    page: props.comments.meta.current_page,
-}), {
-    preserveScroll: true,
-    onSuccess: cancelEditComment,
-});
+const updateComment = async () => {
+    if (! await confirmation('Are you sure you want to update this comment?')) {
+        commentTextAreaRef.value?.focus();
+        return;
+    }
+    commentForm.put(route('comments.update', {
+        comment: commentIdBeingEdited.value,
+        page: props.comments.meta.current_page,
+    }), {
+        preserveScroll: true,
+        onSuccess: cancelEditComment,
+    });
+};
 
-const deleteComment = (commentId) => router.delete(route('comments.destroy', { comment: commentId, page: props.comments.meta.current_page }), {
-    preserveScroll: true,
-});
+const deleteComment = async (commentId) => {
+    if (! await confirmation('Are you sure you want to delete this comment?')) {
+        return;
+    }
+    router.delete(route('comments.destroy', {comment: commentId, page: props.comments.meta.current_page}), {
+        preserveScroll: true,
+    });
+};
 </script>
