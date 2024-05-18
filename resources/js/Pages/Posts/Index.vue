@@ -12,7 +12,7 @@
                 </span>
                 <span class="text-sm">{{ formattedDate(post) }} ago</span>
             </div>
-            <Link :href="route('posts.show', post.id)" class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white hover:text-orange-500 dark:hover:text-orange-500 focus:outline-none focus:text-orange-500 dark:focus:text-orange-500 transition duration-150 ease-in-out">
+            <Link :href="post.routes.show" class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white hover:text-orange-500 dark:hover:text-orange-500 focus:outline-none focus:text-orange-500 dark:focus:text-orange-500 transition duration-150 ease-in-out">
                 {{ post.title }}
             </Link>
             <p class="mb-5 font-light text-gray-500 dark:text-gray-400 whitespace-pre-wrap">
@@ -23,9 +23,7 @@
                     <img :src="post.user.profile_photo_url" class="w-7 h-7 rounded-full" />
                     <span class="font-medium dark:text-white">{{ post.user.username }}</span>
                 </div>
-                <DefaultLink
-                    :href="route('posts.show', post.id)"
-                >
+                <DefaultLink :href="post.routes.show">
                     Read More
                     <ArrowRightCircleIcon class="ml-2 size-5"/>
                 </DefaultLink>

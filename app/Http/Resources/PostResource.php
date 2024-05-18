@@ -18,13 +18,15 @@ class PostResource extends JsonResource
             'id' => $this->id,
             'user' => $this->whenLoaded('user', fn () => UserResource::make($this->user)),
             'title' => $this->title,
-            'slug' => $this->slug,
             'body' => $this->body,
             'image' => $this->image,
             'featured' => $this->featured,
             'published_at' => $this->published_at,
             'updated_at' => $this->updated_at,
             'created_at' => $this->created_at,
+            'routes' => [
+                'show' => $this->showRoute(),
+            ],
         ];
     }
 }

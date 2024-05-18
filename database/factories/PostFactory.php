@@ -21,7 +21,6 @@ class PostFactory extends Factory
         return [
             'user_id' => User::factory(),
             'title' => str(fake()->sentence)->beforeLast('.')->title(),
-            'slug' => str(fake()->slug)->slug(),
             'image' => fake()->imageUrl(),
             'body' => Collection::times(4, fn () => fake()->realText(1250))->join(PHP_EOL.PHP_EOL),
             'featured' => fake()->boolean,
